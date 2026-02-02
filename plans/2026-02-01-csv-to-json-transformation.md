@@ -67,7 +67,7 @@ class Menu(BaseModel):
 ### Key Discoveries
 - The `Item` model has `size` as a direct field, not `available_sizes`
 - Items are tied to categories via `category_name` (string), not nested under categories
-- The existing JSON (`menu-structure-2026-01-30.json`) uses a different structure with `options` and `defaults` - this is NOT compatible with the current Pydantic models
+
 - The `Size` enum only has 4 values: snack, small, medium, large - CSV has "Kids" size which maps to "small"
 - Modifiers are not present in the CSV but are part of the model
 

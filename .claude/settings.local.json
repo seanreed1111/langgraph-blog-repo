@@ -11,7 +11,14 @@
       "Bash(gh repo create:*)",
       "Bash(pre-commit:*)",
       "Bash(uv run:*)",
-      "WebFetch(domain:docs.astral.sh)"
+      "WebFetch(domain:docs.astral.sh)",
+      "Bash(git config:*)",
+      "WebFetch(domain:docs.langchain.com)",
+      "WebSearch",
+      "WebFetch(domain:medium.com)",
+      "mcp__docs-langchain__SearchDocsByLangChain",
+      "WebFetch(domain:developers.llamaindex.ai)",
+      "WebFetch(domain:docs.llamaindex.ai)"
     ]
   }
 }
