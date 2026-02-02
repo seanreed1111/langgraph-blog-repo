@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from enums import Size, CategoryName
+import random
 
 
 class Modifier(BaseModel):
@@ -17,7 +18,12 @@ class Item(BaseModel):
     modifiers: list[Modifier] = Field(default_factory=list)
 
 
-class Combo(BaseModel):
-    combo_id: str
-    items: list[Item]
-    quantity: int = Field(default=1, ge=1)
+class Order(BaseModel):
+    order_id: int = Field(default_factory=lambda: random.randint(1, 1000))
+    items: list[Item] = Field(default_factory=list)
+
+
+# class Combo(BaseModel):
+#     combo_id: str
+#     items: list[Item]
+#     quantity: int = Field(default=1, ge=1)
