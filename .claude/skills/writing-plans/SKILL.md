@@ -21,7 +21,7 @@ This skill **delegates to the /create_plan command**, which provides:
 - Comprehensive codebase investigation before planning
 - Iterative plan development with user collaboration
 - Structured templates with dependencies and success criteria
-- Plans saved to `plan/YYYY-MM-DD-<feature-name>.md`
+- Plans saved to `plans/YYYY-MM-DD-<feature-name>.md`
 
 The command will:
 1. Gather context through parallel research tasks

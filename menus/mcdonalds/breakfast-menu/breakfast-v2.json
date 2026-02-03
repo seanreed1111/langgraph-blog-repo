@@ -1,0 +1,278 @@
+{
+  "metadata": {
+    "menu_id": "mcd-breakfast-menu",
+    "menu_name": "McDonald's Breakfast Menu",
+    "menu_version": "v2",
+    "location": {
+      "id": "mcd-main-location",
+      "name": "McDonald's Main Location",
+      "address": "123 Main St, Anytown, USA",
+      "city": "Anytown",
+      "state": "CA",
+      "zip": "12345",
+      "country": "USA"
+    }
+  },
+  "items": [
+    {
+      "item_id": "bacon",
+      "name": "Bacon",
+      "category_name": "breakfast",
+      "size": "regular",
+      "default_size": "regular",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": []
+    },
+    {
+      "item_id": "big-breakfast",
+      "name": "Big Breakfast",
+      "category_name": "breakfast",
+      "size": "regular",
+      "default_size": "regular",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": [
+        {
+          "modifier_id": "egg-whites",
+          "name": "Egg Whites"
+        },
+        {
+          "modifier_id": "hotcakes",
+          "name": "Hotcakes"
+        }
+      ]
+    },
+    {
+      "item_id": "big-breakfast-large",
+      "name": "Big Breakfast",
+      "category_name": "breakfast",
+      "size": "large",
+      "default_size": "large",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": [
+        {
+          "modifier_id": "egg-whites",
+          "name": "Egg Whites"
+        },
+        {
+          "modifier_id": "hotcakes",
+          "name": "Hotcakes"
+        }
+      ]
+    },
+    {
+      "item_id": "cinnamon-melts",
+      "name": "Cinnamon Melts",
+      "category_name": "breakfast",
+      "size": "regular",
+      "default_size": "regular",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": []
+    },
+    {
+      "item_id": "egg-mcmuffin",
+      "name": "Egg McMuffin",
+      "category_name": "breakfast",
+      "size": "regular",
+      "default_size": "regular",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": []
+    },
+    {
+      "item_id": "egg-white-delight",
+      "name": "Egg White Delight",
+      "category_name": "breakfast",
+      "size": "regular",
+      "default_size": "regular",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": []
+    },
+    {
+      "item_id": "fruit-maple-oatmeal",
+      "name": "Fruit & Maple Oatmeal",
+      "category_name": "breakfast",
+      "size": "regular",
+      "default_size": "regular",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": []
+    },
+    {
+      "item_id": "hash-brown",
+      "name": "Hash Brown",
+      "category_name": "breakfast",
+      "size": "regular",
+      "default_size": "regular",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": []
+    },
+    {
+      "item_id": "hotcakes",
+      "name": "Hotcakes",
+      "category_name": "breakfast",
+      "size": "regular",
+      "default_size": "regular",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": [
+        {
+          "modifier_id": "sausage",
+          "name": "Sausage"
+        }
+      ]
+    },
+    {
+      "item_id": "sausage",
+      "name": "Sausage",
+      "category_name": "breakfast",
+      "size": "regular",
+      "default_size": "regular",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": []
+    },
+    {
+      "item_id": "sausage-biscuit",
+      "name": "Sausage Biscuit",
+      "category_name": "breakfast",
+      "size": "regular",
+      "default_size": "regular",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": [
+        {
+          "modifier_id": "egg",
+          "name": "Egg"
+        },
+        {
+          "modifier_id": "egg-whites",
+          "name": "Egg Whites"
+        }
+      ]
+    },
+    {
+      "item_id": "sausage-biscuit-large",
+      "name": "Sausage Biscuit",
+      "category_name": "breakfast",
+      "size": "large",
+      "default_size": "large",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": [
+        {
+          "modifier_id": "egg",
+          "name": "Egg"
+        },
+        {
+          "modifier_id": "egg-whites",
+          "name": "Egg Whites"
+        }
+      ]
+    },
+    {
+      "item_id": "sausage-burrito",
+      "name": "Sausage Burrito",
+      "category_name": "breakfast",
+      "size": "regular",
+      "default_size": "regular",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": []
+    },
+    {
+      "item_id": "sausage-mcgriddles",
+      "name": "Sausage McGriddles",
+      "category_name": "breakfast",
+      "size": "regular",
+      "default_size": "regular",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": []
+    },
+    {
+      "item_id": "sausage-mcmuffin",
+      "name": "Sausage McMuffin",
+      "category_name": "breakfast",
+      "size": "regular",
+      "default_size": "regular",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": [
+        {
+          "modifier_id": "egg",
+          "name": "Egg"
+        },
+        {
+          "modifier_id": "egg-whites",
+          "name": "Egg Whites"
+        }
+      ]
+    },
+    {
+      "item_id": "southern-style-chicken-biscuit",
+      "name": "Southern Style Chicken Biscuit",
+      "category_name": "breakfast",
+      "size": "regular",
+      "default_size": "regular",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": []
+    },
+    {
+      "item_id": "southern-style-chicken-biscuit-large",
+      "name": "Southern Style Chicken Biscuit",
+      "category_name": "breakfast",
+      "size": "large",
+      "default_size": "large",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": []
+    },
+    {
+      "item_id": "steak",
+      "name": "Steak",
+      "category_name": "breakfast",
+      "size": "regular",
+      "default_size": "regular",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": []
+    },
+    {
+      "item_id": "steak-egg-biscuit",
+      "name": "Steak & Egg Biscuit",
+      "category_name": "breakfast",
+      "size": "regular",
+      "default_size": "regular",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": []
+    },
+    {
+      "item_id": "steak-egg-biscuit-large",
+      "name": "Steak & Egg Biscuit",
+      "category_name": "breakfast",
+      "size": "large",
+      "default_size": "large",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": []
+    },
+    {
+      "item_id": "steak-egg-mcmuffin",
+      "name": "Steak & Egg McMuffin",
+      "category_name": "breakfast",
+      "size": "regular",
+      "default_size": "regular",
+      "quantity": 1,
+      "modifiers": [],
+      "available_modifiers": []
+    }
+  ]
+}

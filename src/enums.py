@@ -6,6 +6,7 @@ class Size(StrEnum):
     SMALL = "small"
     MEDIUM = "medium"
     LARGE = "large"
+    REGULAR = "regular"
 
 
 class CategoryName(StrEnum):

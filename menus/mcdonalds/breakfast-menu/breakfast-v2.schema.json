@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "breakfast-v2.schema.json",
+  "title": "McDonald's Breakfast Menu",
+  "description": "Schema for McDonald's breakfast menu data",
+  "type": "object",
+  "required": ["metadata", "items"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "description": "Menu metadata including identification and location",
+      "required": ["menu_id", "menu_name", "menu_version", "location"],
+      "properties": {
+        "menu_id": {
+          "type": "string",
+          "description": "Unique identifier for the menu"
+        },
+        "menu_name": {
+          "type": "string",
+          "description": "Human-readable name of the menu"
+        },
+        "menu_version": {
+          "type": "string",
+          "description": "Version identifier for the menu"
+        },
+        "location": {
+          "type": "object",
+          "description": "Location information for this menu",
+          "required": ["id", "name", "address", "city", "state", "zip", "country"],
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique identifier for the location"
+            },
+            "name": {
+              "type": "string",
+              "description": "Name of the location"
+            },
+            "address": {
+              "type": "string",
+              "description": "Street address"
+            },
+            "city": {
+              "type": "string",
+              "description": "City name"
+            },
+            "state": {
+              "type": "string",
+              "description": "State or province code"
+            },
+            "zip": {
+              "type": "string",
+              "description": "Postal/ZIP code"
+            },
+            "country": {
+              "type": "string",
+              "description": "Country code or name"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "items": {
+      "type": "array",
+      "description": "List of menu items",
+      "items": {
+        "type": "object",
+        "required": ["item_id", "name", "category_name", "size", "quantity", "modifiers", "available_modifiers"],
+        "properties": {
+          "item_id": {
+            "type": "string",
+            "description": "Unique identifier for the item"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the item"
+          },
+          "category_name": {
+            "type": "string",
+            "description": "Category this item belongs to"
+          },
+          "size": {
+            "type": "string",
+            "enum": ["regular", "large"],
+            "description": "Size of the item"
+          },
+          "default_size": {
+            "type": "string",
+            "enum": ["regular", "large"],
+            "description": "Default size when ordering this item"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Default quantity"
+          },
+          "modifiers": {
+            "type": "array",
+            "description": "Currently applied modifiers",
+            "items": {
+              "$ref": "#/$defs/modifier"
+            }
+          },
+          "available_modifiers": {
+            "type": "array",
+            "description": "Modifiers that can be applied to this item",
+            "items": {
+              "$ref": "#/$defs/modifier"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "modifier": {
+      "type": "object",
+      "description": "A modifier that can be applied to an item",
+      "required": ["modifier_id", "name"],
+      "properties": {
+        "modifier_id": {
+          "type": "string",
+          "description": "Unique identifier for the modifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name of the modifier"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
