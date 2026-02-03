@@ -12,6 +12,14 @@ class Modifier(BaseModel):
     modifier_id: str
     name: str
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Modifier):
+            return NotImplemented
+        return self.modifier_id == other.modifier_id and self.name == other.name
+
+    def __hash__(self) -> int:
+        return hash((self.modifier_id, self.name))
+
 
 class Location(BaseModel):
     id: str
@@ -21,6 +29,14 @@ class Location(BaseModel):
     state: str
     zip: str
     country: str
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Location):
+            return NotImplemented
+        return self.id == other.id
+
+    def __hash__(self) -> int:
+        return hash(self.id)
 
 
 class Item(BaseModel):
@@ -41,6 +57,64 @@ class Item(BaseModel):
             self.size = self.default_size
         return self
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Item):
+            return NotImplemented
+        return (
+            self.item_id == other.item_id
+            and self.name == other.name
+            and self.category_name == other.category_name
+            and set(self.modifiers) == set(other.modifiers)
+        )
+
+    def __hash__(self) -> int:
+        return hash(
+            (self.item_id, self.name, self.category_name, frozenset(self.modifiers))
+        )
+
+    def _is_same_item(self, other: "Item") -> bool:
+        """Check if this is the same item configuration (for ordering/addition)."""
+        return (
+            self.item_id == other.item_id
+            and self.name == other.name
+            and self.category_name == other.category_name
+            and set(self.modifiers) == set(other.modifiers)
+        )
+
+    def __ge__(self, other: object) -> bool:
+        if not isinstance(other, Item) or not self._is_same_item(other):
+            return NotImplemented
+        return self.quantity >= other.quantity
+
+    def __gt__(self, other: object) -> bool:
+        if not isinstance(other, Item) or not self._is_same_item(other):
+            return NotImplemented
+        return self.quantity > other.quantity
+
+    def __le__(self, other: object) -> bool:
+        if not isinstance(other, Item) or not self._is_same_item(other):
+            return NotImplemented
+        return self.quantity <= other.quantity
+
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, Item) or not self._is_same_item(other):
+            return NotImplemented
+        return self.quantity < other.quantity
+
+    def __add__(self, other: object) -> "Item":
+        if not isinstance(other, Item) or not self._is_same_item(other):
+            return NotImplemented
+        return Item(
+            item_id=self.item_id,
+            name=self.name,
+            category_name=self.category_name,
+            default_size=self.default_size,
+            size=self.size,
+            quantity=self.quantity + other.quantity,
+            modifiers=list(self.modifiers),
+            available_modifiers=list(self.available_modifiers),
+        )
+
 
 class Order(BaseModel):
     order_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -53,6 +127,18 @@ class Menu(BaseModel):
     menu_version: str
     location: Location
     items: list[Item]
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Menu):
+            return NotImplemented
+        return (
+            self.menu_id == other.menu_id
+            and self.menu_name == other.menu_name
+            and self.menu_version == other.menu_version
+        )
+
+    def __hash__(self) -> int:
+        return hash((self.menu_id, self.menu_name, self.menu_version))
 
     @classmethod
     def from_dict(cls, data: dict) -> "Menu":
