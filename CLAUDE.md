@@ -40,3 +40,39 @@ date -Iseconds     # Get current date (use this to verify the actual date)
 - `Modifier` - Item variations (Extra Cheese, No Onions, etc.)
 - `Order` - Collection of items for a customer order
 - `Menu` - Full menu with items
+
+## Agent Behavior: Scope and Confirmation
+
+**Do only what is explicitly requested.** Do not add extra features, refactors, or "improvements" beyond the specific ask.
+
+After completing the requested work:
+1. Provide a brief summary of what was done
+2. If there are REQUIRED or CRITICAL follow-up items, list them briefly with why they're critical
+3. Ask for confirmation before implementing anything else
+
+### Examples
+
+**Bad behavior:**
+```
+User: "Add a `total_price` property to the Order class"
+Agent: *adds total_price, then also adds discount logic, tax calculation,
+       currency formatting, and refactors the Item class*
+```
+
+**Good behavior:**
+```
+User: "Add a `total_price` property to the Order class"
+Agent: *adds only total_price property*
+"Done. Added `total_price` property that sums item prices.
+
+Note: This doesn't account for modifiers that affect price. If modifier
+pricing is needed, that would require changes to the Modifier model.
+
+What would you like to do next?"
+```
+
+**Good behavior (question vs implementation):**
+```
+User: "How does the Menu class load items?"
+Agent: *reads code and explains* — does NOT start implementing changes
+```

@@ -18,7 +18,8 @@
       "WebFetch(domain:medium.com)",
       "mcp__docs-langchain__SearchDocsByLangChain",
       "WebFetch(domain:developers.llamaindex.ai)",
-      "WebFetch(domain:docs.llamaindex.ai)"
+      "WebFetch(domain:docs.llamaindex.ai)",
+      "mcp__langfuse-docs__searchLangfuseDocs"
     ]
   }
 }
