@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Fixed
+- Fix Langfuse tracing not appearing in dashboard by migrating to SDK v3 singleton pattern (#5)
+
 ### Added
 - Add ty type checker as dev dependency with `make typecheck` target (#6)
 - Add `prune_branches` Claude command for cleaning up local git branches (#6)
