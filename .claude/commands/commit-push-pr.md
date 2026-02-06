@@ -19,33 +19,6 @@ Based on the above changes:
 - Only proceed to Phase 2 if there are code/feature changes beyond CHANGELOG.md
 - This prevents infinite loops: code → changelog → changelog → changelog...
 
-### Phase 0: Secret scan (MUST run before any commits)
-**Before creating any commits, scan ALL changed files for accidentally committed secrets.**
-
-Search all non-gitignored changed files for hardcoded secrets:
-- **API keys**: `api_key`, `apikey`, `api-key` assigned to literal string values
-- **Secret keys**: `secret_key`, `secret`, `client_secret` assigned to literal values
-- **Tokens**: `token`, `access_token`, `auth_token`, `bearer` assigned to literal values
-- **Passwords**: `password`, `passwd`, `pwd` assigned to literal values
-- **Connection strings**: database/Redis/service URIs containing embedded credentials
-- **AWS credentials**: `AKIA...` patterns, `aws_access_key_id`, `aws_secret_access_key`
-- **Private keys**: `BEGIN RSA PRIVATE KEY`, `BEGIN OPENSSH PRIVATE KEY`, `BEGIN EC PRIVATE KEY`
-
-**Exclude from flagging** (these are NOT secrets):
-- Environment variable references (`os.environ[...]`, `os.getenv(...)`)
-- Placeholder values (`"your-api-key-here"`, `"changeme"`, `"xxx"`, `"..."`)
-- Empty strings or None values
-- `.env.example` template files
-- Test fixtures with clearly fake values
-
-**If any secrets are detected: STOP IMMEDIATELY.** Do not commit, push, or create a PR. Instead, report:
-1. Which file and line contains the secret
-2. What type of secret it is
-3. The value redacted (first 4 and last 4 characters only)
-4. Recommend replacing with `os.getenv("KEY_NAME")` and adding the value to `.env`
-
-**Only proceed to Phase 1 if the secret scan passes with no findings.**
-
 ### Phase 1: Create PR (single message)
 1. Create a new branch if on main
 2. Create a single commit with an appropriate message

@@ -8,14 +8,7 @@ You are tasked with creating git commits for the changes made during this sessio
 
 ## Process:
 
-1. **Secret scan (MUST run before any commits):**
-   - Before anything else, scan all changed files for accidentally committed secrets
-   - Search for: hardcoded API keys, secret keys, tokens, passwords, connection strings with credentials, AWS credentials (`AKIA...`), private keys (`BEGIN ... PRIVATE KEY`)
-   - **Exclude from flagging** (not secrets): `os.environ[...]`/`os.getenv(...)` references, placeholder values (`"your-api-key-here"`, `"changeme"`, `"xxx"`, `"..."`), empty strings, None values, `.env.example` templates, test fixtures with fake values
-   - **If any secrets are found: STOP.** Do not commit. Report the file, line, secret type, and redacted value (first 4 and last 4 chars only). Recommend using `os.getenv("KEY_NAME")` instead.
-   - Only proceed to step 2 if the scan passes clean.
-
-2. **Think about what changed:**
+1. **Think about what changed:**
    - Review the conversation history and understand what was accomplished
    - Run `git status` to see current changes
    - Run `git diff` to understand the modifications
