@@ -17,11 +17,8 @@ def run_chat() -> None:
     print(f"Session: {session_id}")
     print("-" * 40)
 
-    # Get Langfuse handler for this session
-    langfuse_handler = get_langfuse_handler(
-        session_id=session_id,
-        user_id=user_id,
-    )
+    # Get Langfuse callback handler (v3: no constructor args)
+    langfuse_handler = get_langfuse_handler()
 
     messages = []
 
@@ -43,13 +40,20 @@ def run_chat() -> None:
         messages.append(HumanMessage(content=user_input))
 
         # Stream response with Langfuse tracing
+        # Pass session_id/user_id via metadata (v3 pattern)
         print("\nAssistant: ", end="", flush=True)
 
         full_response = ""
         try:
             for chunk, metadata in graph.stream(
                 {"messages": messages},
-                config={"callbacks": [langfuse_handler]},
+                config={
+                    "callbacks": [langfuse_handler],
+                    "metadata": {
+                        "langfuse_session_id": session_id,
+                        "langfuse_user_id": user_id,
+                    },
+                },
                 stream_mode="messages",
             ):
                 # Only process AI message chunks
@@ -68,8 +72,7 @@ def run_chat() -> None:
         messages.append(AIMessage(content=full_response))
 
     # Flush traces before exit
-    langfuse = get_langfuse_client()
-    langfuse.flush()
+    get_langfuse_client().flush()
 
 
 if __name__ == "__main__":

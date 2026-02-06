@@ -4,7 +4,7 @@ import atexit
 
 from langchain_core.messages import SystemMessage
 from langchain_mistralai import ChatMistralAI
-from langfuse import Langfuse
+from langfuse import Langfuse, get_client
 from langfuse.langchain import CallbackHandler
 from langgraph.graph import START, END, StateGraph, MessagesState
 
@@ -13,30 +13,28 @@ from stage_1.config import get_settings
 SYSTEM_PROMPT = """You are a helpful, friendly assistant. Be concise and helpful.
 If you don't know something, say so. Keep responses brief unless asked for detail."""
 
+# Initialize the Langfuse singleton (v3 pattern)
+_settings = get_settings()
+Langfuse(
+    public_key=_settings.langfuse_public_key,
+    secret_key=_settings.langfuse_secret_key,
+    host=_settings.langfuse_base_url,
+)
+
 
 def get_langfuse_client() -> Langfuse:
-    """Get Langfuse client instance."""
-    settings = get_settings()
-    return Langfuse(
-        public_key=settings.langfuse_public_key,
-        secret_key=settings.langfuse_secret_key,
-        host=settings.langfuse_base_url,
-    )
+    """Get Langfuse singleton client instance."""
+    return get_client()
 
 
-def get_langfuse_handler(
-    session_id: str | None = None,
-    user_id: str | None = None,
-) -> CallbackHandler:
-    """Get Langfuse callback handler for tracing."""
-    settings = get_settings()
-    return CallbackHandler(
-        public_key=settings.langfuse_public_key,
-        secret_key=settings.langfuse_secret_key,
-        host=settings.langfuse_base_url,
-        session_id=session_id,
-        user_id=user_id,
-    )
+def get_langfuse_handler() -> CallbackHandler:
+    """Get Langfuse callback handler for tracing.
+
+    In v3, CallbackHandler takes no constructor args — it inherits
+    from the Langfuse singleton. Pass session_id/user_id via metadata
+    in the config dict when invoking the graph.
+    """
+    return CallbackHandler()
 
 
 def create_chat_model() -> ChatMistralAI:
@@ -78,5 +76,4 @@ def create_graph() -> StateGraph:
 graph = create_graph()
 
 # Register flush on shutdown
-_langfuse = get_langfuse_client()
-atexit.register(_langfuse.flush)
+atexit.register(get_client().flush)
