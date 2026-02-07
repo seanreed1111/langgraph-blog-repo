@@ -56,11 +56,11 @@ After this plan is complete:
 5. `make dev SCOPE=2` opens LangGraph Studio with the interview graph
 
 **Success Criteria:**
-- [ ] `make chat SCOPE=2` runs a full interview with printed transcript
+- [x] `make chat SCOPE=2` runs a full interview with printed transcript
 - [ ] Langfuse dashboard shows a trace with 6 generation spans for a 3-turn interview
 - [ ] Each generation in Langfuse is linked to its prompt (click generation → see prompt version)
 - [ ] Changing prompt text in Langfuse UI changes the bot's behavior on next run (no code deploy)
-- [ ] `--preset` flag switches persona pairings (e.g., `bartender-patron`)
+- [x] `--preset` flag switches persona pairings (e.g., `bartender-patron`)
 - [ ] `make dev SCOPE=2` loads the graph in LangGraph Studio
 
 ## What We're NOT Doing
@@ -139,9 +139,9 @@ uv sync --package stage-2
 ### Success Criteria
 
 #### Automated Verification:
-- [ ] `uv sync --package stage-2` completes without errors
-- [ ] `uv run --package stage-2 python -c "from stage_2.config import get_settings; s = get_settings(); print('Mistral key loaded:', bool(s.mistral_api_key))"` prints `True`
-- [ ] `uv run --package stage-2 python -c "from langchain_mistralai import ChatMistralAI; print('ChatMistralAI importable')"` succeeds
+- [x] `uv sync --package stage-2` completes without errors
+- [x] `uv run --package stage-2 python -c "from stage_2.config import get_settings; s = get_settings(); print('Mistral key loaded:', bool(s.mistral_api_key))"` prints `True`
+- [x] `uv run --package stage-2 python -c "from langchain_mistralai import ChatMistralAI; print('ChatMistralAI importable')"` succeeds
 
 ---
 
@@ -242,7 +242,7 @@ This is copied verbatim from the design document's "Persona Presets" section.
 ### Success Criteria
 
 #### Automated Verification:
-- [ ] `uv run --package stage-2 python -c "from stage_2.personas import Preset, PERSONA_PRESETS; print(list(Preset)); print(len(PERSONA_PRESETS))"` prints all 4 enum members and `4`
+- [x] `uv run --package stage-2 python -c "from stage_2.personas import Preset, PERSONA_PRESETS; print(list(Preset)); print(len(PERSONA_PRESETS))"` prints all 4 enum members and `4`
 
 ---
 
@@ -334,8 +334,8 @@ uv run --package stage-2 python scripts/seed_langfuse_prompts.py
 ### Success Criteria
 
 #### Automated Verification:
-- [ ] Script runs without error and prints "Done."
-- [ ] `uv run --package stage-2 python -c "from langfuse import Langfuse; from stage_2.config import get_settings; s = get_settings(); lf = Langfuse(public_key=s.langfuse_public_key, secret_key=s.langfuse_secret_key, host=s.langfuse_base_url); p = lf.get_prompt('interview/initiator', type='chat'); print('Prompt found:', p.name)"` prints `Prompt found: interview/initiator`
+- [x] Script runs without error and prints "Done."
+- [x] `uv run --package stage-2 python -c "from langfuse import Langfuse; from stage_2.config import get_settings; s = get_settings(); lf = Langfuse(public_key=s.langfuse_public_key, secret_key=s.langfuse_secret_key, host=s.langfuse_base_url); p = lf.get_prompt('interview/initiator', type='chat'); print('Prompt found:', p.name)"` prints `Prompt found: interview/initiator`
 
 #### Manual Verification:
 - [ ] Open Langfuse UI → Prompt Management → verify `interview/initiator` and `interview/responder` exist with `production` label
@@ -567,8 +567,8 @@ atexit.register(get_client().flush)
 ### Success Criteria
 
 #### Automated Verification:
-- [ ] `uv run --package stage-2 python -c "from stage_2.graph import graph; print('Graph compiled:', type(graph).__name__)"` prints `Graph compiled: CompiledStateGraph`
-- [ ] `uv run --package stage-2 python -c "from stage_2.graph import InterviewState; print('State fields:', list(InterviewState.__annotations__.keys()))"` prints the expected fields
+- [x] `uv run --package stage-2 python -c "from stage_2.graph import graph; print('Graph compiled:', type(graph).__name__)"` prints `Graph compiled: CompiledStateGraph`
+- [x] `uv run --package stage-2 python -c "from stage_2.graph import InterviewState; print('State fields:', list(InterviewState.__annotations__.keys()))"` prints the expected fields
 
 ---
 
@@ -720,8 +720,8 @@ if __name__ == "__main__":
 ### Success Criteria
 
 #### Automated Verification:
-- [ ] `uv run --package stage-2 python -m stage_2.main --help` prints usage with `--preset` and `--max-turns` options
-- [ ] `uv run --package stage-2 python -c "from stage_2.main import parse_args; print('main importable')"` succeeds
+- [x] `uv run --package stage-2 python -m stage_2.main --help` prints usage with `--preset` and `--max-turns` options
+- [x] `uv run --package stage-2 python -c "from stage_2.main import parse_args; print('main importable')"` succeeds
 
 ---
 
@@ -802,8 +802,8 @@ Open Langfuse UI and verify:
 ### Success Criteria
 
 #### Automated Verification:
-- [ ] `make chat SCOPE=2 ARGS="--preset reporter-politician --max-turns 2"` completes without Python errors (topic provided interactively)
-- [ ] `make chat SCOPE=2 ARGS="--preset bartender-patron --max-turns 1"` completes with different persona names in output
+- [x] `make chat SCOPE=2 ARGS="--preset reporter-politician --max-turns 2"` completes without Python errors (topic provided interactively)
+- [x] `make chat SCOPE=2 ARGS="--preset bartender-patron --max-turns 1"` completes with different persona names in output
 
 #### Manual Verification:
 - [ ] Langfuse trace shows expected number of generation spans
@@ -838,3 +838,64 @@ Open Langfuse UI and verify:
 - Langfuse prompt-to-trace linking: https://langfuse.com/docs/prompt-management/features/link-to-traces
 - Langfuse LangChain integration: `ChatPromptTemplate.metadata = {"langfuse_prompt": prompt}` pattern
 - LangGraph `stream_mode="updates"`: returns `{node_name: node_output}` dicts
+
+---
+
+## Appendix A: Mistral Message Alternation Fix
+
+### The Problem
+
+The plan's original `graph.py` passed `state["messages"]` directly to the LLM chain. This worked for the **initiator's first turn** (the history was just the `HumanMessage` topic), but broke on the **responder's first turn** with:
+
+```
+httpx.HTTPStatusError: 400 — "Expected last role User or Tool (or Assistant with prefix True)
+for serving but got assistant"
+```
+
+Mistral's chat API enforces **strict user/assistant alternation**. In a two-bot graph, both bots produce `AIMessage` objects. When the responder node runs, the message history looks like:
+
+```
+[HumanMessage: "Interview topic: ..."]   ← user role ✓
+[AIMessage: Reporter says "..."]          ← assistant role ✓ (initiator's output)
+```
+
+The responder's chain prepends a system message, then passes this history to Mistral. But from Mistral's perspective, the last non-system message is `assistant` — and the model expects `user` before it can generate. On the second cycle it gets worse: two consecutive `AIMessage`s from both bots.
+
+### The Fix
+
+Each node converts **all** `AIMessage`s in the history to `HumanMessage`s before sending to the LLM. From any individual bot's perspective, everything the other bot (and the user) said is "input" — i.e., the `user` role.
+
+```python
+from langchain_core.messages import HumanMessage as HM, AIMessage as AIM
+
+history = []
+for msg in state["messages"]:
+    if isinstance(msg, HM):
+        history.append(msg)
+    elif isinstance(msg, AIM):
+        history.append(HM(content=msg.content, name=msg.name))
+```
+
+The `name` field is preserved so the bot can still distinguish who said what in the conversation (e.g., "Reporter" vs "Politician" in the message `name` attribute).
+
+### Why This Works
+
+After conversion, every node always sees a message history that alternates correctly:
+
+```
+System: "You are Politician, ..."        ← system
+HumanMessage: "Interview topic: ..."     ← user
+HumanMessage: "Senator, documents..."    ← user (was Reporter's AIMessage)
+```
+
+Mistral sees `system → user → ...` and generates an `assistant` response. On subsequent turns, the pattern holds because every prior message — regardless of which bot produced it — is presented as `user`.
+
+### Why the Plan Didn't Catch This
+
+The design document noted that message history handling was "an implementation detail to resolve during coding." The plan's `graph.py` used `MessagesPlaceholder("messages")` to pass history through, which is correct for single-bot graphs where messages naturally alternate (user asks, assistant answers). In a two-bot graph, both participants produce `AIMessage`, breaking the alternation assumption.
+
+### Alternative Approaches Considered
+
+1. **Use `HumanMessage` for one bot's output at write time** — Would pollute the canonical message history in state; downstream consumers (transcript printing, Langfuse traces) would lose the distinction between user input and bot output.
+2. **Inject synthetic `HumanMessage` separators** — Adds noise to the conversation that the LLM would see and potentially respond to.
+3. **Convert at read time (chosen)** — Each node re-maps the history for its own LLM call without modifying the shared state. Clean separation between the canonical conversation record and what each LLM sees.

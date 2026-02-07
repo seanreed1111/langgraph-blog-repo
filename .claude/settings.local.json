@@ -50,7 +50,14 @@
       "WebFetch(domain:hatch.pypa.io)",
       "WebFetch(domain:tomasrepcik.dev)",
       "Bash(uv tree:*)",
-      "Bash(uv pip list:*)"
+      "Bash(uv pip list:*)",
+      "WebFetch(domain:support.langchain.com)",
+      "WebFetch(domain:langfuse.com)",
+      "WebFetch(domain:python.langchain.com)",
+      "WebFetch(domain:docs.smith.langchain.com)",
+      "WebFetch(domain:pypi.org)",
+      "WebFetch(domain:reference.langchain.com)",
+      "Bash(uv pip show:*)"
     ]
   }
 }

@@ -1,1 +1,1 @@
-"""v0-stage-1: Simple chatbot with Langfuse observability."""
+"""Stage 2: Two-bot interview with configurable personas and Langfuse prompt management."""

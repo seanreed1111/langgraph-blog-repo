@@ -1,79 +1,106 @@
-"""CLI chat interface for stage-1 chatbot with streaming responses."""
+"""CLI for the two-bot interview graph with streaming output."""
 
+import argparse
 import uuid
 
-from langchain_core.messages import AIMessage, HumanMessage, AIMessageChunk
+from langchain_core.messages import AIMessage, HumanMessage
 
 from stage_2.graph import graph, get_langfuse_handler, get_langfuse_client
+from stage_2.personas import Preset, PERSONA_PRESETS
 
 
-def run_chat() -> None:
-    """Run interactive chat loop with streaming responses."""
-    # Generate session and user IDs for tracing
-    session_id = f"cli-session-{uuid.uuid4().hex[:8]}"
-    user_id = f"cli-user-{uuid.uuid4().hex[:8]}"
+def parse_args() -> argparse.Namespace:
+    """Parse CLI arguments."""
+    parser = argparse.ArgumentParser(description="Two-Bot Interview")
+    parser.add_argument(
+        "--preset",
+        choices=[p.value for p in Preset],
+        default=Preset.REPORTER_POLITICIAN.value,
+        help="Persona pairing (default: reporter-politician)",
+    )
+    parser.add_argument(
+        "--max-turns",
+        type=int,
+        default=3,
+        help="Max messages per bot (default: 3)",
+    )
+    return parser.parse_args()
 
-    print("Stage-2 Chatbot (type 'quit' to exit)")
-    print(f"Session: {session_id}")
-    print("-" * 40)
 
-    # Get Langfuse callback handler (v3: no constructor args)
+def run_interview() -> None:
+    """Run a single interview conversation and print the transcript."""
+    args = parse_args()
+    preset_key = Preset(args.preset)
+    max_turns = args.max_turns
+    preset = PERSONA_PRESETS[preset_key]
+
+    initiator_name = preset["initiator"]["persona_name"]
+    responder_name = preset["responder"]["persona_name"]
+
+    # Session tracking
+    session_id = f"interview-{uuid.uuid4().hex[:8]}"
+
+    print(f"Two-Bot Interview: {initiator_name} vs {responder_name}")
+    print(f"Preset: {preset_key} | Max turns: {max_turns} | Session: {session_id}")
+    print("=" * 60)
+
+    # Get topic from user
+    try:
+        topic = input("\nEnter interview topic: ").strip()
+    except (KeyboardInterrupt, EOFError):
+        print("\nCancelled.")
+        return
+
+    if not topic:
+        print("No topic provided. Exiting.")
+        return
+
+    print(f"\nTopic: {topic}")
+    print("-" * 60)
+
+    # Set up Langfuse tracing
     langfuse_handler = get_langfuse_handler()
 
-    messages = []
-
-    while True:
-        try:
-            user_input = input("\nYou: ").strip()
-        except (KeyboardInterrupt, EOFError):
-            print("\nGoodbye!")
-            break
-
-        if not user_input:
-            continue
-
-        if user_input.lower() in ("quit", "exit", "q"):
-            print("Goodbye!")
-            break
-
-        # Add user message
-        messages.append(HumanMessage(content=user_input))
-
-        # Stream response with Langfuse tracing
-        # Pass session_id/user_id via metadata (v3 pattern)
-        print("\nAssistant: ", end="", flush=True)
-
-        full_response = ""
-        try:
-            for chunk, metadata in graph.stream(
-                {"messages": messages},
-                config={
-                    "callbacks": [langfuse_handler],
-                    "metadata": {
-                        "langfuse_session_id": session_id,
-                        "langfuse_user_id": user_id,
-                    },
+    # Invoke graph with streaming (node-by-node)
+    try:
+        for update in graph.stream(
+            {
+                "messages": [HumanMessage(content=f"Interview topic: {topic}")],
+                "max_turns": max_turns,
+                "initiator_turns": 0,
+                "responder_turns": 0,
+                "preset": preset_key,
+                "initiator_name": initiator_name,
+                "responder_name": responder_name,
+            },
+            config={
+                "callbacks": [langfuse_handler],
+                "metadata": {
+                    "langfuse_session_id": session_id,
                 },
-                stream_mode="messages",
-            ):
-                # Only process AI message chunks
-                if isinstance(chunk, AIMessageChunk) and chunk.content:
-                    print(chunk.content, end="", flush=True)
-                    full_response += chunk.content
-        except Exception as e:
-            print(f"\nError: {e}")
-            # Remove the orphaned user message from history since stream failed
-            messages.pop()
-            continue
+            },
+            stream_mode="updates",
+        ):
+            # update is {"node_name": {"messages": [AIMessage], ...}}
+            for node_name, node_output in update.items():
+                if "messages" not in node_output:
+                    continue
+                for msg in node_output["messages"]:
+                    if isinstance(msg, AIMessage):
+                        speaker = msg.name or node_name
+                        print(f"\n[{speaker}]: {msg.content}")
+    except Exception as e:
+        print(f"\nError during interview: {e}")
+        raise
 
-        print()  # Newline after streaming completes
+    # Summary
+    print("\n" + "=" * 60)
+    print("Interview complete.")
+    print(f"Total turns: {max_turns} per bot ({max_turns * 2} messages)")
 
-        # Add complete response to message history
-        messages.append(AIMessage(content=full_response))
-
-    # Flush traces before exit
+    # Flush traces
     get_langfuse_client().flush()
 
 
 if __name__ == "__main__":
-    run_chat()
+    run_interview()
